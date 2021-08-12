@@ -1,4 +1,4 @@
-package models
+package model
 
 type Response struct {
 	Detections []Detections `json:"Detections"`

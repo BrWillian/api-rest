@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
 	routers "github.com/brwillian/api-rest/routers"
+	"github.com/gorilla/mux"
 )
 
 func handleRequests() {
 	myRouter := mux.NewRouter()
-	myRouter.HandleFunc("/api/classificador", routers.getClassificacao).Methods("POST")
-	myRouter.HandleFunc("/api/version", routers.getVersion)
+	myRouter.HandleFunc("/api/classificador/veicular", routers.GetClassificacao).Methods("POST")
+	myRouter.HandleFunc("/api/version", routers.GetVersion)
 	log.Fatal(http.ListenAndServe(":10000", myRouter))
 }
 

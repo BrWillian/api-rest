@@ -1,18 +1,18 @@
-package routers
+package router
 
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"image"
 	"io/ioutil"
+	"log"
 	"net/http"
 
+	models "github.com/brwillian/api-rest/models"
 	"gocv.io/x/gocv"
-	"github.com/brwillian/api-rest/models"
 )
 
-func getClassificacao(w http.ResponseWriter, r *http.Request) {
+func GetClassificacao(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	var msg models.Message
 	json.Unmarshal(reqBody, &msg)
@@ -25,11 +25,11 @@ func getClassificacao(w http.ResponseWriter, r *http.Request) {
 	net := gocv.ReadNet("data/classificador.weights", "data/classificador.cfg")
 	defer net.Close()
 
-	OutputNames := getOutputsNames(&net)
+	OutputNames := GetOutputsNames(&net)
 
 	detectClass := Detect(&net, mat, 0.6, 0.4, OutputNames)
 
-	fmt.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+	log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(detectClass)
@@ -69,7 +69,7 @@ func Detect(net *gocv.Net, src gocv.Mat, scoreThreshold float32, nmsThreshold fl
 
 	return result
 }
-func getOutputsNames(net *gocv.Net) []string {
+func GetOutputsNames(net *gocv.Net) []string {
 	var outputLayers []string
 	for _, i := range net.GetUnconnectedOutLayers() {
 		layer := net.GetLayer(i)
@@ -110,7 +110,7 @@ func PostProcess(frame gocv.Mat, outs *[]gocv.Mat) ([]image.Rectangle, []float32
 	}
 	return boxes, confidences, classIds
 }
-func getVersion(w http.ResponseWriter, r *http.Request) {
+func GetVersion(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"status": "OK"})
 }
